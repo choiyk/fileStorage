@@ -29,6 +29,7 @@ public class FileStorageServiceImpl implements FileStorageService{
         try{
             Files.createDirectory(root);
         } catch(IOException e){
+            logger.error("Can not create directory. e: "+e.getMessage());
             throw new RuntimeException("업로드할 폴더를 만들 수 없습니다.");
         }
     }
@@ -38,6 +39,7 @@ public class FileStorageServiceImpl implements FileStorageService{
         try{
             Files.copy(file.getInputStream(), this.root.resolve(file.getOriginalFilename()));
         } catch(Exception e){
+            logger.error("Can not save file. e: "+e.getMessage());
             throw new RuntimeException("파일 저장 실패! e: "+e.getMessage());
         }
     }
@@ -52,9 +54,11 @@ public class FileStorageServiceImpl implements FileStorageService{
                 return resource;
             }
             else{
+                logger.error("Resource doesn't exists or can't read.");
                 throw new RuntimeException("파일 불러오기 실패");
             } 
         } catch(MalformedURLException e){
+            logger.error("Can not load file. e: "+e.getMessage());
             throw new RuntimeException("e: "+e.getMessage());
         }
     }
@@ -69,6 +73,7 @@ public class FileStorageServiceImpl implements FileStorageService{
         try{
             return Files.walk(this.root, 1).filter(path -> !path.equals(this.root)).map(this.root::relativize);
         } catch(Exception e){
+            logger.error("Can not load files. e: "+e.getMessage());
             throw new RuntimeException("파일 불러오기 실패");
         }
     }
