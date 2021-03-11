@@ -4,8 +4,14 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.stream.Stream;
 
+import com.sample.filestorage.dto.FileInfo;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
@@ -33,9 +39,11 @@ public abstract class FileStorageServiceImpl implements FileStorageService{
     }
 
     @Override
-    public void save(MultipartFile file){
+    public FileInfo save(MultipartFile file){
         try{
-            Files.copy(file.getInputStream(), this.path.resolve(file.getOriginalFilename()));
+            FileInfo fileInfo = this.makeFileInfo(file);
+            Files.copy(file.getInputStream(), fileInfo.getPath());
+            return fileInfo;
         } catch(Exception e){
             logger.error("Can not save file. e: "+e.getMessage());
             throw new RuntimeException("파일 저장 실패! e: "+e.getMessage());
@@ -62,6 +70,23 @@ public abstract class FileStorageServiceImpl implements FileStorageService{
     }
 
     @Override
+    public void delete(String filename) {
+        try{
+            Path file = path.resolve(filename);
+            if(Files.exists(file)){
+                Files.delete(file);
+            }
+            else{
+                logger.error("File doesn't exist.");
+            }
+        } catch(Exception e){
+            logger.error("Can not delete file. e: "+e.getMessage());
+            throw new RuntimeException("e: "+e.getMessage());
+        }
+
+    }
+
+    @Override
     public void deleteAll(){
         FileSystemUtils.deleteRecursively(path.toFile());
     }
@@ -80,6 +105,16 @@ public abstract class FileStorageServiceImpl implements FileStorageService{
 
     protected String getRoot(){
         return this.root;
+    }
+
+    private FileInfo makeFileInfo(MultipartFile file) throws Exception{
+        Date date = new Date();
+        String ts = new SimpleDateFormat("yyyyMMddHHmmss").format(date);
+        String fileName = ts+"_"+file.getOriginalFilename();
+        String type = FilenameUtils.getExtension(file.getOriginalFilename());
+        Path path = this.path.resolve(fileName);
+        FileInfo fileInfo = new FileInfo(file.getOriginalFilename(), fileName, path, file.getSize(), type);
+        return fileInfo;
     }
     
 }

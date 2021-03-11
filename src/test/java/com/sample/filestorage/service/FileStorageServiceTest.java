@@ -6,12 +6,15 @@ import java.nio.file.Paths;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
 public class FileStorageServiceTest {
+
+    @Autowired private WinsamFileStorageService fileStorageService;
 
     @Test
     public void howWorkFilesWork(){
@@ -26,6 +29,13 @@ public class FileStorageServiceTest {
         } catch(Exception e){
             throw new RuntimeException("파일을 불러올 수 없습니다.");
         }
+    }
+
+    @Test
+    public void delete(){
+        // this.setPath();
+        // super.init();
+        fileStorageService.delete("test.txt");
     }
 
 }

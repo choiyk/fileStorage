@@ -47,17 +47,5 @@ public class MyfileServiceTest {
         int num = myfileService.getCount();
         assertEquals(0, num);
     }
-
-    @Test
-    public void addMyfile(){
-        Date date = new Date();
-        String ts = new SimpleDateFormat("yyyyMMddHHmmss").format(date);
-        String fName = "test1_"+ts;
-        Myfile myfile = new Myfile("test1", fName, 123, "jpg", "path/");
-        System.out.println(fName.length());
-        System.out.println(myfile.toString());
-        myfileService.addMyfile(myfile);
-        getMyfiles();
-    }
     
 }
