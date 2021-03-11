@@ -18,6 +18,4 @@ public interface FileStorageService {
 
     public Stream<Path> loadAll();
 
-    public Path getRoot();
-
 }

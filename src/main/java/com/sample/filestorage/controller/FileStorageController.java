@@ -3,9 +3,12 @@ package com.sample.filestorage.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
+
 import com.sample.filestorage.dto.FileInfo;
 import com.sample.filestorage.dto.ResponseMessage;
 import com.sample.filestorage.service.FileStorageService;
+import com.sample.filestorage.service.WinsamFileStorageService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +31,8 @@ public class FileStorageController {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Autowired private FileStorageService fileStorageService;
+    //@Autowired private FileStorageService fileStorageService;
+    @Autowired private WinsamFileStorageService fileStorageService;
 
     @PostMapping("/upload")
     public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("file") MultipartFile file){

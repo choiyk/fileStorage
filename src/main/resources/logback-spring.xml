@@ -11,8 +11,20 @@
     <property name="ERR_LOG_FILE_NAME" value="err_log"/>
     <property name="LOG_PATTERN" value="%-5level %d{yy-MM-dd HH:mm:ss} [%thread] [%M] [%logger{0}:%line] - %msg%n"/>
 
-    <!--info log-->
+    <!--console log-->
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!--file log-->
     <appender name="File" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>info</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
         <file>${LOG_PATH}/${LOG_FILE_NAME}.log</file>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <pattern>${LOG_PATTERN}</pattern>
@@ -49,6 +61,7 @@
     </appender>
 
     <root level="${LOG_LEVEL}">
+        <appender-ref ref="Console"/>
         <appender-ref ref="File"/>
         <appender-ref ref="Error"/>
     </root>

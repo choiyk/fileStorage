@@ -52,12 +52,10 @@ public class MyfileServiceTest {
     public void addMyfile(){
         Date date = new Date();
         String ts = new SimpleDateFormat("yyyyMMddHHmmss").format(date);
-        Myfile myfile = new Myfile();
-        myfile.setOriginName("test1");
-        myfile.setFName("test1"+"_"+ts);
-        myfile.setFSize(123);
-        myfile.setFType("jpg");
-
+        String fName = "test1_"+ts;
+        Myfile myfile = new Myfile("test1", fName, 123, "jpg", "path/");
+        System.out.println(fName.length());
+        System.out.println(myfile.toString());
         myfileService.addMyfile(myfile);
         getMyfiles();
     }

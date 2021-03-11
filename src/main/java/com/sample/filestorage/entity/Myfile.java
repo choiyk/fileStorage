@@ -7,11 +7,12 @@ import lombok.Data;
 @Data
 public class Myfile {
 
-    int id;
-    String originName;
-    String fName;
-    int fSize;
-    String fType;
-    Timestamp fDatetime;
+    private int id;
+    private final String originName;
+    private final String fName;
+    private final int fSize;
+    private final String fType;
+    private Timestamp fDatetime;
+    private final String storedPath;
     
 }

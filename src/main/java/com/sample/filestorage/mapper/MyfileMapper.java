@@ -22,7 +22,7 @@ public interface MyfileMapper {
     @Select("SELECT COUNT(*) FROM myfile")
     int count();
 
-    @Insert("INSERT INTO myfile (originName, fName, fSize, fType) VALUES (#{originName}, #{fName}, #{fSize}, #{fType})")
+    @Insert("INSERT INTO myfile (originName, fName, fSize, fType, storedPath) VALUES (#{originName}, #{fName}, #{fSize}, #{fType}, #{storedPath})")
     @Options(useGeneratedKeys=true, keyProperty="id")
     void insert(Myfile myfile);
 
