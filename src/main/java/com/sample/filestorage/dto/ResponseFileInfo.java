@@ -1,7 +1,8 @@
 package com.sample.filestorage.dto;
 
+import java.sql.Timestamp;
+
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -10,8 +11,12 @@ import lombok.ToString;
 @Setter
 @ToString
 @AllArgsConstructor
-public class ResponseMessage {
+public class ResponseFileInfo {
 
-    String message;
-    
+    private int id;
+    private String name;
+    private String url;
+    private long size;
+    private Timestamp date;
+
 }

@@ -2,17 +2,31 @@ package com.sample.filestorage.entity;
 
 import java.sql.Timestamp;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
-@Data
+@Getter
+@Setter
+@ToString
+@AllArgsConstructor
 public class Myfile {
-
-    private int id;
-    private final String originName;
-    private final String fName;
-    private final long fSize;
-    private final String fType;
-    private Timestamp fDatetime;
-    private final String storedPath;
     
+    private int id;
+    private String originName;
+    private String fName;
+    private long fSize;
+    private String fType;
+    private Timestamp fDatetime;
+    private String storedPath;
+
+    public Myfile(String originName, String fName, long fSize, String fType, String storedPath){
+        this.originName = originName;
+        this.fName = fName;
+        this.fSize = fSize;
+        this.fType = fType;
+        this.storedPath = storedPath;
+    }
+
 }

@@ -16,7 +16,7 @@ public interface MyfileMapper {
     @Select("SELECT * FROM myfile")
     List<Myfile> findAll();
 
-    @Select("SELECT * FROM myfile WHERE id = #{id}")
+    @Select("SELECT * FROM myfile WHERE id=#{id}")
     Myfile findOne(int id);
 
     @Select("SELECT COUNT(*) FROM myfile")

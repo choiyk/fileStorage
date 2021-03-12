@@ -1,5 +1,6 @@
 package com.sample.filestorage.service;
 
+import org.apache.commons.io.FilenameUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import static org.junit.Assert.assertEquals;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import com.sample.filestorage.entity.Myfile;
 
@@ -33,6 +35,20 @@ public class MyfileServiceTest {
         Myfile myfile = myfileService.getMyfile(1);
         System.out.println("test: getMyfile");
         System.out.println(myfile);
+    }
+
+    @Test
+    public void addMyfile(){
+        Date date = new Date();
+        String ts = new SimpleDateFormat("yyyyMMddHHmmss").format(date);
+        Random random = new Random();
+        random.setSeed(System.currentTimeMillis());
+        String type = FilenameUtils.getExtension("fil");
+        String fileName = ts+"_"+random.nextInt(99)+"."+"type";
+        String storedPath = "this.path.toString()";
+        Myfile fileInfo = new Myfile("file.getOriginalFilename()", fileName, 1234, storedPath, type);
+        
+        myfileService.addMyfile(fileInfo);
     }
 
     @Test

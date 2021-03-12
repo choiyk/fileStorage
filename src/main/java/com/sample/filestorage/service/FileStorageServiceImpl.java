@@ -6,11 +6,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Random;
 import java.util.stream.Stream;
 
-import com.sample.filestorage.dto.FileInfo;
+import com.sample.filestorage.entity.Myfile;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +19,6 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-//TO-DO 파일 업로드 정보 DB 저장
 public abstract class FileStorageServiceImpl implements FileStorageService{
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -39,10 +38,11 @@ public abstract class FileStorageServiceImpl implements FileStorageService{
     }
 
     @Override
-    public FileInfo save(MultipartFile file){
+    public Myfile save(MultipartFile file){
         try{
-            FileInfo fileInfo = this.makeFileInfo(file);
-            Files.copy(file.getInputStream(), fileInfo.getPath());
+            Myfile fileInfo = this.makeFileInfo(file);
+            Path storedPath = this.path.resolve(fileInfo.getFName());
+            Files.copy(file.getInputStream(), storedPath);
             return fileInfo;
         } catch(Exception e){
             logger.error("Can not save file. e: "+e.getMessage());
@@ -54,7 +54,7 @@ public abstract class FileStorageServiceImpl implements FileStorageService{
     public Resource load(String filename){
         try{
             Path file = path.resolve(filename);
-            Resource resource = new UrlResource(file.toUri());  //URL을 기준으로 리소스를 읽어들임
+            Resource resource = new UrlResource(file.toUri());
 
             if(resource.exists() || resource.isReadable()){
                 return resource;
@@ -107,13 +107,15 @@ public abstract class FileStorageServiceImpl implements FileStorageService{
         return this.root;
     }
 
-    private FileInfo makeFileInfo(MultipartFile file) throws Exception{
+    private Myfile makeFileInfo(MultipartFile file) throws Exception{
         Date date = new Date();
         String ts = new SimpleDateFormat("yyyyMMddHHmmss").format(date);
-        String fileName = ts+"_"+file.getOriginalFilename();
+        Random random = new Random();
+        random.setSeed(System.currentTimeMillis());
         String type = FilenameUtils.getExtension(file.getOriginalFilename());
-        Path path = this.path.resolve(fileName);
-        FileInfo fileInfo = new FileInfo(file.getOriginalFilename(), fileName, path, file.getSize(), type);
+        String fileName = ts+"_"+random.nextInt(99)+"."+type;
+        String storedPath = this.path.toString();
+        Myfile fileInfo = new Myfile(file.getOriginalFilename(), fileName, file.getSize(), type, storedPath);
         return fileInfo;
     }
     
