@@ -1,6 +1,7 @@
 package com.sample.filestorage.controller;
 
 import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
 import java.util.List;
 
 import com.sample.filestorage.dto.ResponseFileInfo;
@@ -11,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -37,10 +39,13 @@ public class FileStorageController {
         try{
             storeFileAndDataService.add(file);
             message = "파일을 업로드 했습니다.";
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
+            return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseMessage(message));
+        } catch(DataAccessException de){
+            message = "같은 이름의 파일이 존재합니다.";
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(message));
         } catch(Exception e){
             message = "파일을 업로드할 수 없습니다.";
-            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(new ResponseMessage(message));
         }        
     }
     
@@ -50,7 +55,7 @@ public class FileStorageController {
             List<ResponseFileInfo> myfiles = storeFileAndDataService.getFiles();
             return ResponseEntity.status(HttpStatus.OK).body(myfiles);
         } catch(Exception e){
-            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(null);
         }
     }
 
@@ -61,7 +66,7 @@ public class FileStorageController {
             Resource file = storeFileAndDataService.getFile(filename);
             return ResponseEntity.status(HttpStatus.OK).header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""+filename+"\"").body(file);
         } catch(Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
 
@@ -73,7 +78,7 @@ public class FileStorageController {
             ContentDisposition cd = ContentDisposition.builder("attachment").filename(result.getName(), StandardCharsets.UTF_8).build();
             return ResponseEntity.status(HttpStatus.OK).header(HttpHeaders.CONTENT_DISPOSITION, cd.toString()).body(result.getFile());
         } catch(Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
 
@@ -84,9 +89,12 @@ public class FileStorageController {
             storeFileAndDataService.remove(id);
             message = "파일을 삭제했습니다.";
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
+        } catch(DataAccessException de){
+            message = "파일이 존재하지 않습니다.";
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage(message));
         } catch(Exception e){
             message = "파일을 삭제할 수 없습니다.";
-            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(new ResponseMessage(message));
         }
     }
 

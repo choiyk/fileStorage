@@ -38,12 +38,11 @@ public abstract class FileStorageServiceImpl implements FileStorageService{
                 logger.error("파일 사이즈가 작음");
                 throw new RuntimeException("파일 사이즈가 작음");
             }
-            //Myfile fileInfo = this.makeFileInfo(file);
             Path storedPath = this.path.resolve(fName);
             Files.copy(file.getInputStream(), storedPath);
         } catch(Exception e){
             logger.error("Can not save file. e: "+e.getMessage());
-            throw new RuntimeException("파일 저장 실패! e: "+e.getMessage());
+            throw new RuntimeException("파일 저장 실패!");
         }
     }
 
