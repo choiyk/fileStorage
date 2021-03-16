@@ -6,13 +6,11 @@ import org.springframework.web.multipart.MultipartFile;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 
-import com.sample.filestorage.entity.Myfile;
-
 public interface FileStorageService {
     
     public void init();
 
-    public Myfile save(MultipartFile file);
+    public void save(MultipartFile file, String fName);
 
     public Resource load(String filename);
 
@@ -21,5 +19,7 @@ public interface FileStorageService {
     public void deleteAll();
 
     public Stream<Path> loadAll();
+
+    public String getRoot();
 
 }

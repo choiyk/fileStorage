@@ -2,6 +2,8 @@ package com.sample.filestorage.dto;
 
 import java.sql.Timestamp;
 
+import org.springframework.core.io.Resource;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,5 +20,6 @@ public class ResponseFileInfo {
     private String url;
     private long size;
     private Timestamp date;
+    private Resource file;
 
 }

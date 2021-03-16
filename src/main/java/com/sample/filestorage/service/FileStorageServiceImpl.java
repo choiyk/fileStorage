@@ -4,14 +4,8 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Random;
 import java.util.stream.Stream;
 
-import com.sample.filestorage.entity.Myfile;
-
-import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
@@ -38,12 +32,15 @@ public abstract class FileStorageServiceImpl implements FileStorageService{
     }
 
     @Override
-    public Myfile save(MultipartFile file){
+    public void save(MultipartFile file, String fName){
         try{
-            Myfile fileInfo = this.makeFileInfo(file);
-            Path storedPath = this.path.resolve(fileInfo.getFName());
+            if(file.getSize() <= 0){
+                logger.error("파일 사이즈가 작음");
+                throw new RuntimeException("파일 사이즈가 작음");
+            }
+            //Myfile fileInfo = this.makeFileInfo(file);
+            Path storedPath = this.path.resolve(fName);
             Files.copy(file.getInputStream(), storedPath);
-            return fileInfo;
         } catch(Exception e){
             logger.error("Can not save file. e: "+e.getMessage());
             throw new RuntimeException("파일 저장 실패! e: "+e.getMessage());
@@ -73,12 +70,7 @@ public abstract class FileStorageServiceImpl implements FileStorageService{
     public void delete(String filename) {
         try{
             Path file = path.resolve(filename);
-            if(Files.exists(file)){
-                Files.delete(file);
-            }
-            else{
-                logger.error("File doesn't exist.");
-            }
+            Files.delete(file);
         } catch(Exception e){
             logger.error("Can not delete file. e: "+e.getMessage());
             throw new RuntimeException("e: "+e.getMessage());
@@ -103,20 +95,8 @@ public abstract class FileStorageServiceImpl implements FileStorageService{
 
     abstract public void setPath();
 
-    protected String getRoot(){
+    public String getRoot(){
         return this.root;
-    }
-
-    private Myfile makeFileInfo(MultipartFile file) throws Exception{
-        Date date = new Date();
-        String ts = new SimpleDateFormat("yyyyMMddHHmmss").format(date);
-        Random random = new Random();
-        random.setSeed(System.currentTimeMillis());
-        String type = FilenameUtils.getExtension(file.getOriginalFilename());
-        String fileName = ts+"_"+random.nextInt(99)+"."+type;
-        String storedPath = this.path.toString();
-        Myfile fileInfo = new Myfile(file.getOriginalFilename(), fileName, file.getSize(), type, storedPath);
-        return fileInfo;
     }
     
 }
